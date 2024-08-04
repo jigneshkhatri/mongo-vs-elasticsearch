@@ -1,0 +1,43 @@
+version: '3.1'
+
+services:
+  mongo-benchmarking:
+    image: mongo:7.0.12
+    container_name: mongo-benchmarking
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27019:27017"
+    command: --wiredTigerCacheSizeGB 1
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 500M
+  
+  elasticsearch-benchmarking:
+    image: elasticsearch:8.14.3
+    container_name: elasticsearch-benchmarking
+    ports:
+      - "9200:9200"
+    environment:
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - discovery.type=single-node
+      - http.host=0.0.0.0
+      - transport.host=0.0.0.0
+      - xpack.security.enabled=false
+      - cluster.name=elasticsearch
+      - bootstrap.memory_lock=true
+      - ELASTIC_PASSWORD=test_password
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 500M
